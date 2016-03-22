@@ -9,6 +9,7 @@ var mongoose = require('mongoose');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var url = require('url');
+var csrf = require('csurf');
 
 // Get database URL
 var dbURL = process.env.MONGOLAB_URI || "mongodb://localhost/DomoMaker";
@@ -57,12 +58,24 @@ app.use(session({
 	}),
 	secret: 'Domo Arigato',
 	resave: true,
-	saveUninitialized: true
+	saveUninitialized: true,
+	cooke: {
+		httpOnly: true
+	}
 }));
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.set(favicon(__dirname + '/../client/img/favicon.png'));
+app.disable('x-powered-by');
 app.use(cookieParser());
+
+// set up CSurf
+app.use(csrf());
+app.use(function(err, req, res, next) {
+	if (err.code !== 'EBADCSRFTOKEN') return next(err);
+	
+	return;
+});
 
 // Send the app to the router
 router(app);
