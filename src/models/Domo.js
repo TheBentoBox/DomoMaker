@@ -25,6 +25,12 @@ var DomoSchema = new mongoose.Schema ({
 		required: true
 	},
 	
+	favFood: {
+		type: String,
+		required: true,
+		trim: true,
+	},
+	
 	owner: {
 		type: mongoose.Schema.ObjectId,
 		required: true,
@@ -41,7 +47,8 @@ var DomoSchema = new mongoose.Schema ({
 DomoSchema.methods.toAPI = function() {
 	return {
 		name: this.name,
-		age: this.age
+		age: this.age,
+		favFood: this.favFood
 	};
 };
 
@@ -52,7 +59,22 @@ DomoSchema.statics.findByOwner = function(ownerId, callback) {
 		owner: mongoose.Types.ObjectId(ownerId)
 	};
 	
-	return DomoModel.find(search).select("name age").exec(callback);
+	return DomoModel.find(search).select("name age favFood").exec(callback);
+};
+
+// Finds an exact matching domo
+DomoSchema.statics.findDomo = function(ownerId, domoInfo, callback) {
+	
+	// create the search query object
+	var search = {
+		owner: mongoose.Types.ObjectId(ownerId),
+		name: domoInfo.name,
+		age: domoInfo.age,
+		favFood: domoInfo.favFood
+	};
+	
+	// return the exact domo, if one is found
+	return DomoModel.findOne(search).select("name age favFood").exec(callback);
 };
 
 // Apply the schema to the model

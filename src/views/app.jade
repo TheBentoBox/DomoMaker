@@ -13,6 +13,8 @@ block body
       input#domoName(type="text", name="name", placeholder="Domo Name")
       label(for="age") Age: 
       input#domoAge(type="text", name="age", placeholder="Domo Age")
+      label(for="favFood") Favorite Food:
+      input#domoFood(type="text", name="favFood", placeholder="Domo's Favorite Food")
       input(type="hidden", name="_csrf", value="#{csrfToken}")
       a#makeDomoSubmit(class="makeDomoSubmit", href="#") Make Domo
   section#domos
@@ -24,7 +26,15 @@ block body
         div.domo
           img(class="domoFace", src="/assets/img/domoface.jpeg", alt="domo face")
           h3.domoName Name: #{val.name}
+          h3.domoFavFood Favorite Food: #{val.favFood}
           h3.domoAge Age: #{val.age}
+          
+          form.deleteForm(name="deleteForm", action="/del", method="POST")
+            input(type="hidden", name="name", value="#{val.name}")
+            input(type="hidden", name="age", value="#{val.age}")
+            input(type="hidden", name="favFood", value="#{val.favFood}")
+            input(type="hidden", name="_csrf", value="#{csrfToken}")
+            img(class="domoDelete", src="/assets/img/deleteButton.png", alt="domo delete button")
   #domoMessage
     img#speech(src="/assets/img/speech.png", alt="speech box")
     h3
